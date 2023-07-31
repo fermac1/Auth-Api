@@ -19,7 +19,7 @@ class RegisterController extends Controller
         $validateUser = Validator::make($request->all(), [
             'name' =>'required',
             'email' =>'required|email|unique:users',
-            'password' =>'required|min:6|alpha_num'
+            'password' =>'required|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/'
         ]);
 
         //check validation
