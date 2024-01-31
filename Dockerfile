@@ -1,17 +1,19 @@
-FROM php:8.2-fpm
-ARG user
-ARG uid
-RUN apt update && apt install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev
-RUN apt clean && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
-WORKDIR /var/www
-USER $user
+# Dockerfile
+# Use base image for container
+FROM richarvey/nginx-php-fpm:3.1.6
+
+# Copy all application code into your Docker container
+COPY . .
+
+RUN apk update
+
+# Install the `npm` package
+RUN apk add --no-cache npm
+
+# Install NPM dependencies
+RUN npm install
+
+# Build Vite assets
+RUN npm run build
+
+CMD ["/start.sh"]
